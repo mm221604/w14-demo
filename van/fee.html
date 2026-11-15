@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>車馬費與時段｜汪汪行動美容車</title>
+<title>路線與車馬費｜汪汪行動美容車</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,21 +13,34 @@
 <nav class="nav"><div class="wrap">
   <a class="brand" href="index.html">🚐 汪汪<span>行動</span>美容車</a>
   <a class="link" href="index.html">首頁</a>
-  <a class="link" href="fee.html" aria-current="page">車馬費與時段</a>
+  <a class="link" href="fee.html" aria-current="page">路線與車馬費</a>
+  <a class="link" href="prepare.html">到府前準備</a>
 </div></nav>
 
 <main class="wrap">
   <a class="back" href="index.html">← 回首頁</a>
-  <h1>📍 車馬費與可預約時段</h1>
-  <p style="color:var(--muted)">選你家離商店街多遠、想約哪一天，下面的車票就會告訴你車馬費和有空的時段。</p>
+  <h1>📍 美容車開到你家要多少？</h1>
+  <p style="color:var(--muted)">選你住哪一區，看美容車從商店街一路開過去；下面的車票會告訴你車馬費和有空的時段。</p>
 
-  <div class="panel">
-    <div class="q">① 你家離商店街大概多遠？</div>
+  <div class="routebox reveal" id="routebox">
+    <img src="../img/van-map.jpg" alt="社區俯瞰地圖：中間一條橫向的路，兩旁是房子、公園和河">
+    <svg viewBox="0 0 1600 900" aria-hidden="true">
+      <path id="road" class="path" d="M 40 410 C 320 398, 600 392, 800 402 S 1200 426, 1580 428"/>
+      <path id="done" class="done" d="M 40 410 C 320 398, 600 392, 800 402 S 1200 426, 1580 428"/>
+      <g id="home" style="display:none"><text font-size="110" text-anchor="middle" dy="-10">🏠</text></g>
+      <g id="shop" transform="translate(40 410)"><circle r="26" fill="#d9733a" stroke="#fff" stroke-width="6"/></g>
+      <g id="van"><text font-size="120" text-anchor="middle" dy="36">🚐</text></g>
+    </svg>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-top:6px">🟠 起點是毛孩商店街；🏠 是你家。</p>
+
+  <div class="panel reveal" style="margin-top:20px">
+    <div class="q">① 你住在哪一區？</div>
     <div class="route">
-      <label><input type="radio" name="dist" value="near" checked><span class="dot">🏠</span>3 公里內</label>
-      <label><input type="radio" name="dist" value="mid"><span class="dot">🏘️</span>3–8 公里</label>
-      <label><input type="radio" name="dist" value="far"><span class="dot">🌳</span>8–15 公里</label>
-      <label><input type="radio" name="dist" value="out"><span class="dot">⛰️</span>15 公里以上</label>
+      <label><input type="radio" name="dist" value="near" checked><span class="dot">🏘️</span>商店街周邊<br><small>3 公里內</small></label>
+      <label><input type="radio" name="dist" value="mid"><span class="dot">🌳</span>公園社區<br><small>3–8 公里</small></label>
+      <label><input type="radio" name="dist" value="far"><span class="dot">🌉</span>河濱新村<br><small>8–15 公里</small></label>
+      <label><input type="radio" name="dist" value="out"><span class="dot">⛰️</span>更遠的地方<br><small>15 公里以上</small></label>
     </div>
 
     <div class="q">② 想約哪一天？</div>
@@ -38,43 +51,73 @@
     </div>
 
     <div class="pass" aria-live="polite">
-      <div class="stub"><div>車馬費</div><div class="big" id="fee"></div></div>
+      <div class="stub"><div>車馬費</div><div class="big" id="fee"></div><div id="eta" style="font-size:.9rem;opacity:.9"></div></div>
       <div class="info" id="slots"></div>
     </div>
   </div>
 </main>
 
 <footer><div class="wrap">
-  © 汪汪行動美容車　·　這一頁：陳大明（第 12 週的功能頁）　·　<a href="../入口頁.html">毛孩商店街</a>的一間店
+  © 汪汪行動美容車　·　這一頁：陳大明（第 12 週的功能頁，展示版加上路線動畫）　·　<a href="../入口頁.html">毛孩商店街</a>的一間店　·　插畫由 AI 生成
 </div></footer>
 
+<script src="../assets/fx.js"></script>
 <script>
-/* 距離 → 車馬費。15 公里以上車開不過去，直接說不能接，不要算出一個做不到的價錢 */
-var FEE = { near: 0, mid: 150, far: 300, out: null };
-/* 每天可預約的時段；8 公里以上來回比較久，只排上午 */
-var SLOTS = {
-  wd:  ["10:00–11:30", "13:30–15:00", "15:30–17:00"],
-  sat: ["09:30–11:00", "11:30–13:00", "14:00–15:30", "16:00–17:30"],
-  sun: []
+/* 距離 → 車馬費、路程。15 公里以上車開不過去，直接說不能接 */
+var AREA = {
+  near: { fee: 0,   eta: "約 10 分鐘", at: 0.30 },
+  mid:  { fee: 150, eta: "約 20 分鐘", at: 0.58 },
+  far:  { fee: 300, eta: "約 35 分鐘", at: 0.86 },
+  out:  { fee: null, eta: "開不到",    at: 1.00 }
 };
+/* 每天可預約的時段；8 公里以上來回比較久，只排上午 */
+var SLOTS = { wd: ["10:00–11:30", "13:30–15:00", "15:30–17:00"], sat: ["09:30–11:00", "11:30–13:00", "14:00–15:30", "16:00–17:30"], sun: [] };
+
+var road = document.getElementById("road"), done = document.getElementById("done");
+var van = document.getElementById("van"), home = document.getElementById("home");
+var LEN = road.getTotalLength(), pos = 0, anim = null;
+done.style.strokeDasharray = LEN; done.style.strokeDashoffset = LEN;
+var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function place(t) {
+  var p = road.getPointAtLength(LEN * t), q = road.getPointAtLength(Math.min(LEN, LEN * t + 2));
+  var ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
+  van.setAttribute("transform", "translate(" + p.x + " " + (p.y - 6) + ") rotate(" + ang + ") scale(-1 1)");
+  done.style.strokeDashoffset = LEN * (1 - t);
+}
+function driveTo(target) {
+  cancelAnimationFrame(anim);
+  var p = road.getPointAtLength(LEN * Math.min(target, 0.97));
+  home.style.display = target >= 1 ? "none" : "";
+  home.setAttribute("transform", "translate(" + p.x + " " + (p.y - 50) + ")");
+  if (still) { pos = target >= 1 ? 0.97 : target; place(pos); return; }
+  var from = pos, to = target >= 1 ? 0.97 : target, start = null, dur = 1400 + Math.abs(to - from) * 1800;
+  function step(ts) {
+    if (!start) start = ts;
+    var k = Math.min(1, (ts - start) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    pos = from + (to - from) * e; place(pos);
+    if (k < 1) anim = requestAnimationFrame(step);
+  }
+  anim = requestAnimationFrame(step);
+}
+
 function picked(name) { return document.querySelector('input[name="' + name + '"]:checked').value; }
 function show() {
-  var dist = picked("dist"), day = picked("day");
-  var fee = FEE[dist], slots = SLOTS[day];
+  var a = AREA[picked("dist")], slots = SLOTS[picked("day")];
   var feeEl = document.getElementById("fee"), info = document.getElementById("slots");
-  if (fee === null) {
+  driveTo(a.at);
+  document.getElementById("eta").textContent = a.eta;
+  if (a.fee === null) {
     feeEl.textContent = "不服務";
     info.textContent = "15 公里以上車開不過去，歡迎到商店街的「毛小孩の家」。";
     return;
   }
-  feeEl.textContent = fee === 0 ? "免費" : fee + " 元";
-  if (dist === "far") slots = slots.filter(function (t) { return t < "13"; });
-  info.innerHTML = slots.length
-    ? "這天可以約：<br>" + slots.map(function (t) { return '<span class="slot">' + t + "</span>"; }).join("")
-    : "這天公休，換一天看看。";
+  feeEl.textContent = a.fee === 0 ? "免費" : a.fee + " 元";
+  if (picked("dist") === "far") slots = slots.filter(function (t) { return t < "13"; });
+  info.innerHTML = slots.length ? "這天可以約：<br>" + slots.map(function (t) { return '<span class="slot">' + t + "</span>"; }).join("") : "這天公休，換一天看看。";
 }
 document.querySelectorAll("input").forEach(function (i) { i.addEventListener("change", show); });
-show();
+place(0); show();
 </script>
 </body>
 </html>

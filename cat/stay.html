@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>貓咪寄宿・美容後寫真｜喵喵美容室</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="district" href="../入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐈 喵喵<span>美容室</span></a>
+  <a class="link" href="index.html">首頁</a>
+  <a class="link" href="quiz.html">個性測驗</a>
+  <a class="link" href="tools.html">價格與週期</a>
+  <a class="link" href="stay.html" aria-current="page">寄宿・寫真</a>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+
+  <section id="stay">
+    <h1 style="color:var(--purple-dark)">🏨 貓咪寄宿</h1>
+    <div class="split2">
+      <img class="reveal" src="../img/cat-hotel.jpg" alt="有貓跳台、窗台和軟床的寄宿房間，一隻貓在睡覺">
+      <div class="box reveal" data-delay="120">
+        <p style="margin-top:0">出遠門時，讓牠住在<strong>只有貓的安靜樓層</strong>，每天傳照片給你。</p>
+        <div class="rooms">
+          <label><input type="radio" name="room" value="600" checked><span>🛏️ <b>標準房</b>　跳台＋軟床</span><b>600 / 晚</b></label>
+          <label><input type="radio" name="room" value="850"><span>🪟 <b>景觀房</b>　大窗台看樹</span><b>850 / 晚</b></label>
+          <label><input type="radio" name="room" value="1200"><span>👨‍👩‍👧 <b>家庭房</b>　最多 3 隻同住</span><b>1,200 / 晚</b></label>
+        </div>
+        <label class="field"><span>住幾晚</span><input type="number" id="nights" min="1" max="30" value="3"></label>
+        <div class="chips">
+          <label><input type="checkbox" id="vid" value="100">📹 每日影片 +100／晚</label>
+          <label><input type="checkbox" id="bath" value="900">🛁 退房前洗澡 +900</label>
+        </div>
+        <div class="out" aria-live="polite"><div>住宿費大約</div><div class="big" id="stayTotal"></div><div id="stayNote" style="font-size:.9rem;opacity:.9"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="photo">
+    <h1 style="color:var(--purple-dark)">📷 美容後寫真</h1>
+    <div class="split2">
+      <div class="reveal">
+        <p>剛洗完香香、毛最蓬的時候最好看。攝影棚就在美容室裡，<strong>不用再出門</strong>。</p>
+        <div class="pkgs">
+          <div class="pkg"><b>📸 輕寫真</b><div class="p">500</div><ul><li>5 張精修</li><li>1 款背景</li></ul></div>
+          <div class="pkg best"><b>🌸 花漾寫真</b>　<small style="color:var(--purple)">最多人選</small><div class="p">1,200</div><ul><li>15 張精修</li><li>花圈、領結道具</li><li>3 款背景</li></ul></div>
+          <div class="pkg"><b>👑 全家福</b><div class="p">2,000</div><ul><li>30 張精修</li><li>主人一起入鏡</li><li>送一張相框</li></ul></div>
+        </div>
+      </div>
+      <img class="reveal" data-delay="120" src="../img/cat-photo.jpg" alt="戴花圈的長毛貓坐在粉紫色小舞台上，前面架著相機">
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  © 喵喵美容室　·　製作：林小華　·　<a href="../入口頁.html">毛孩商店街</a>的一間店　·　插畫由 AI 生成
+</div></footer>
+
+<script src="../assets/fx.js"></script>
+<script>
+var $ = function (id) { return document.getElementById(id); };
+function stay() {
+  var room = +document.querySelector('input[name="room"]:checked').value;
+  var n = Math.max(1, Math.min(30, parseInt($("nights").value, 10) || 1));
+  var total = room * n, notes = [n + " 晚 × " + room];
+  if ($("vid").checked) { total += 100 * n; notes.push("每日影片 " + 100 * n); }
+  if ($("bath").checked) { total += 900; notes.push("退房洗澡 900"); }
+  if (n >= 7) { var off = Math.round(room * n * 0.1); total -= off; notes.push("住 7 晚以上住宿費 9 折 −" + off); }
+  $("stayTotal").textContent = total.toLocaleString() + " 元";
+  $("stayNote").textContent = notes.join("、");
+}
+document.querySelectorAll("#stay input").forEach(function (x) { x.addEventListener("input", stay); x.addEventListener("change", stay); });
+stay();
+</script>
+</body>
+</html>

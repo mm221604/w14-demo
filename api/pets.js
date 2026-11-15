@@ -1,25 +1,11 @@
 // 我的毛孩 API：只有登入的會員能用，而且只會讀到、改到「自己的」資料。
 // 資料庫連線字串只存在 Vercel 環境變數（Neon 整合自動建立），不會傳到瀏覽器。
 const { neon } = require("@neondatabase/serverless");
+const { memberId } = require("./_auth.js");
 
 const SPECIES = ["狗", "貓", "其他"];
 const SIZES = ["小型", "中型", "大型"];
-let jwks = null;
 let tableReady = null;
-
-async function memberId(req) {
-  const m = /^Bearer (.+)$/.exec(req.headers.authorization || "");
-  if (!m) return null;
-  const authUrl = process.env.NEON_AUTH_BASE_URL || process.env.VITE_NEON_AUTH_URL;
-  const { createRemoteJWKSet, jwtVerify } = await import("jose");
-  jwks ??= createRemoteJWKSet(new URL(authUrl + "/.well-known/jwks.json"));
-  try {
-    const { payload } = await jwtVerify(m[1], jwks);
-    return payload.sub || null;
-  } catch {
-    return null;   // 通行證過期或是假的
-  }
-}
 
 function ensureTable(sql) {
   return sql`

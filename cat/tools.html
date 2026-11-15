@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>價格與美容週期｜喵喵美容室</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="district" href="../入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐈 喵喵<span>美容室</span></a>
+  <a class="link" href="index.html">首頁</a>
+  <a class="link" href="quiz.html">個性測驗</a>
+  <a class="link" href="tools.html" aria-current="page">價格與週期</a>
+  <a class="link" href="stay.html">寄宿・寫真</a>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1 style="color:var(--purple-dark)">🧮 算價錢、算下次什麼時候來</h1>
+
+  <div class="tools">
+    <section class="box reveal">
+      <h2>貓咪美容價格</h2>
+      <label class="field"><span>毛長</span>
+        <select id="coat"><option value="900">短毛（洗澡 900）</option><option value="1300">長毛（洗澡＋梳開 1,300）</option></select></label>
+      <div class="field"><span>加選項目</span>
+        <div class="chips">
+          <label><input type="checkbox" value="300" data-n="獅子頭造型">🦁 獅子頭 +300</label>
+          <label><input type="checkbox" value="150" data-n="剪指甲">✂️ 剪指甲 +150</label>
+          <label><input type="checkbox" value="200" data-n="除廢毛">🪮 除廢毛 +200</label>
+          <label><input type="checkbox" value="250" data-n="除蚤">🐜 除蚤 +250</label>
+        </div></div>
+      <label class="field"><span>毛有沒有打結？</span>
+        <select id="knot"><option value="0">沒有</option><option value="200">一點點（+200）</option><option value="500">很多，要剃掉（+500）</option></select></label>
+      <div class="out" aria-live="polite"><div>大約</div><div class="big" id="price"></div><div id="pdetail" style="font-size:.9rem;opacity:.9"></div></div>
+    </section>
+
+    <section class="box reveal" data-delay="120">
+      <h2>下次什麼時候該來？</h2>
+      <label class="field"><span>上次美容是哪一天</span><input type="date" id="last"></label>
+      <label class="field"><span>你家貓是</span>
+        <select id="type"><option value="42">短毛貓（約 6 週一次）</option><option value="28">長毛貓（約 4 週一次）</option><option value="56">10 歲以上老貓（約 8 週一次）</option></select></label>
+      <div class="out" aria-live="polite" id="next"></div>
+    </section>
+
+    <section class="box reveal" data-delay="240">
+      <h2>美容前注意事項</h2>
+      <ul class="check" id="pre">
+        <li><label><input type="checkbox"><span>美容前 3 小時不要餵飯</span></label></li>
+        <li><label><input type="checkbox"><span>用<b>有門的提籠</b>帶來，不要用抱的</span></label></li>
+        <li><label><input type="checkbox"><span>提籠裡放一條有牠味道的毯子</span></label></li>
+        <li><label><input type="checkbox"><span>有皮膚病、吃藥、懷孕要先說</span></label></li>
+        <li><label><input type="checkbox"><span>疫苗卡帶著（寄宿一定要）</span></label></li>
+      </ul>
+      <p id="preDone" style="font-weight:800;color:var(--purple-dark)"></p>
+      <button class="btn" type="button" onclick="print()">🖨 列印</button>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  © 喵喵美容室　·　製作：林小華　·　<a href="../入口頁.html">毛孩商店街</a>的一間店　·　插畫由 AI 生成
+</div></footer>
+
+<script src="../assets/fx.js"></script>
+<script>
+var $ = function (id) { return document.getElementById(id); };
+
+/* 價格 */
+function price() {
+  var base = +$("coat").value, knot = +$("knot").value, total = base + knot, parts = [$("coat").selectedOptions[0].text.split("（")[0] + " " + base];
+  document.querySelectorAll(".chips input:checked").forEach(function (c) { total += +c.value; parts.push(c.dataset.n + " +" + c.value); });
+  if (knot) parts.push("打結處理 +" + knot);
+  $("price").textContent = total.toLocaleString() + " 元";
+  $("pdetail").textContent = parts.join("、");
+}
+document.querySelectorAll("#coat,#knot,.chips input").forEach(function (x) { x.onchange = price; });
+price();
+
+/* 週期提醒 */
+var WEEK = ["日", "一", "二", "三", "四", "五", "六"];
+function today() { return new Date(Date.now() + (8 * 60 + new Date().getTimezoneOffset()) * 60000); }
+(function () { var d = today(); d.setDate(d.getDate() - 30); $("last").value = d.toISOString().slice(0, 10); })();
+function next() {
+  if (!$("last").value) { $("next").textContent = "先選上次美容的日期"; return; }
+  var d = new Date($("last").value + "T00:00"); d.setDate(d.getDate() + (+$("type").value));
+  if (d.getDay() === 2) d.setDate(d.getDate() + 1);   // 週二公休，往後一天
+  var left = Math.ceil((d - today()) / 86400000);
+  $("next").innerHTML = '<span class="cal"><small>' + (d.getMonth() + 1) + ' 月</small><b>' + d.getDate() + "</b></span>" +
+    "<span>建議 <b>" + d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate() + "（週" + WEEK[d.getDay()] + "）</b> 再來<br>" +
+    (left > 0 ? "還有 " + left + " 天" : left === 0 ? "就是今天！" : "已經超過 " + (-left) + " 天了，該來囉") + "</span>";
+}
+$("last").onchange = next; $("type").onchange = next; next();
+
+/* 注意事項 */
+var pre = document.querySelectorAll("#pre input");
+function preDone() { var n = [].filter.call(pre, function (b) { return b.checked; }).length; $("preDone").textContent = n === pre.length ? "🎉 都準備好了！" : "還差 " + (pre.length - n) + " 項"; }
+pre.forEach(function (b) { b.onchange = preDone; }); preDone();
+</script>
+</body>
+</html>

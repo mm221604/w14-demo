@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>到府前準備｜汪汪行動美容車</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="district" href="../入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🚐 汪汪<span>行動</span>美容車</a>
+  <a class="link" href="index.html">首頁</a>
+  <a class="link" href="fee.html">路線與車馬費</a>
+  <a class="link" href="prepare.html" aria-current="page">到府前準備</a>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1>✅ 美容車到之前，先準備這些</h1>
+  <p style="color:var(--muted)">一項一項勾，全部勾完就可以等車了。也可以按「列印」貼在門口。</p>
+
+  <div class="reveal">
+    <div class="progress"><i id="bar"></i></div>
+    <ul class="check" id="list">
+      <li><label><input type="checkbox"><span><b>確認停車位置</b>：樓下要有一台車的位置（約 5 公尺），有管理員的話先說一聲。</span></label></li>
+      <li><label><input type="checkbox"><span><b>美容前 2 小時不要餵飯</b>：吃太飽洗澡容易吐。</span></label></li>
+      <li><label><input type="checkbox"><span><b>先帶去尿尿</b>：在車上 90 分鐘，先上好廁所。</span></label></li>
+      <li><label><input type="checkbox"><span><b>準備牽繩</b>：從家裡走到車上要牽好。</span></label></li>
+      <li><label><input type="checkbox"><span><b>告訴美容師特別狀況</b>：皮膚病、怕吹風機、會咬人、有沒有在吃藥。</span></label></li>
+      <li><label><input type="checkbox"><span><b>帶一條牠熟悉的毛巾</b>：有自己的味道比較安心。</span></label></li>
+    </ul>
+    <p id="ready" style="font-weight:800;color:var(--teal-dark);margin-top:14px"></p>
+    <button class="btn" type="button" onclick="print()">🖨 列印清單</button>
+  </div>
+
+  <section class="reveal">
+    <h2>常見問題</h2>
+    <details><summary>☔ 下雨天還會來嗎？</summary><p>小雨照常，車子停好後用雨棚接毛孩上車。颱風天或大雨特報會提前一天打電話改期，不收費。</p></details>
+    <details><summary>🔌 要跟我家借水電嗎？</summary><p>不用。車上有自己的水箱、熱水和發電機，不會用到你家的水電。</p></details>
+    <details><summary>🐕 大型犬可以嗎？</summary><p>車上空間適合中型犬以下。大型犬請改到商店街的「毛小孩の家」，那邊的美容台比較大。</p></details>
+    <details><summary>👀 我可以在旁邊看嗎？</summary><p>可以。側門打開你就站在旁邊，很多毛孩看得到主人反而比較乖。</p></details>
+    <details><summary>💳 怎麼付錢？</summary><p>現金、LINE Pay、街口都可以，做完再付。</p></details>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  © 汪汪行動美容車　·　製作：陳大明　·　<a href="../入口頁.html">毛孩商店街</a>的一間店　·　插畫由 AI 生成
+</div></footer>
+
+<script src="../assets/fx.js"></script>
+<script>
+var boxes = document.querySelectorAll("#list input");
+function paint() {
+  var n = [].filter.call(boxes, function (b) { return b.checked; }).length;
+  document.getElementById("bar").style.width = (n / boxes.length * 100) + "%";
+  document.getElementById("ready").textContent = n === boxes.length ? "🎉 全部準備好了，等美容車到樓下！" : "還差 " + (boxes.length - n) + " 項";
+}
+boxes.forEach(function (b) { b.onchange = paint; });
+paint();
+</script>
+</body>
+</html>

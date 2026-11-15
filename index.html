@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>毛小孩の家｜社區型寵物美容工作室</title>
-<meta name="description" content="毛小孩の家：住宅區裡的小型寵物美容工作室。洗澡價格試算、危險食物查詢、美容後照護說明。">
+<meta name="description" content="毛小孩の家：住宅區裡的小型寵物美容工作室。線上預約、洗澡價格試算、危險食物查詢、美容後照護。">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,94 +18,104 @@
     <a class="link" href="calc.html">價格試算</a>
     <a class="link" href="look.html">危險食物</a>
     <a class="link" href="care.html">美容後照護</a>
-    <a class="link" href="member.html">🔑 會員登入</a>
+    <a class="link" href="booking.html">📅 線上預約</a>
+    <a class="link" href="member.html" id="memberLink">🔑 會員登入</a>
   </div>
 </div></nav>
 
+<header class="hero-full">
+  <div class="bg" style="background-image:url(img/home-hero.jpg)" role="img" aria-label="店內美容師幫白色貴賓犬吹毛"></div>
+  <div class="wrap">
+    <span class="open-badge" id="openBadge"><i></i><span>營業時間 週二～週日 10:00–19:00</span></span>
+    <h1>住在巷子裡的<br>毛孩美容室</h1>
+    <p>一次只接一隻，<strong>不關籠、不趕時間</strong>。怕生、年紀大、第一次美容的毛孩，都可以慢慢來。</p>
+    <div class="cta">
+      <a class="btn" href="booking.html">📅 線上預約</a>
+      <a class="btn ghost" href="calc.html">先算算多少錢</a>
+    </div>
+  </div>
+</header>
+
 <main class="wrap">
 
-  <!-- 店家介紹：王小美 W06 用 Notebook 整理的 about.txt -->
-  <section class="hero">
-    <div>
-      <h1>住在巷子裡的<br>毛孩美容室</h1>
-      <p class="lead">我們是一間開在住宅區的小型寵物美容工作室，一次只接一隻，<strong>不關籠、不趕時間</strong>。
-        怕生、年紀大、第一次美容的毛孩，都可以慢慢來。</p>
-      <div class="tags">
-        <span class="tag">一對一美容</span><span class="tag">小型犬・中大型犬・貓</span><span class="tag">美容過程可拍照回報</span>
-      </div>
-      <a class="btn" href="calc.html">先算算要多少錢 →</a>
+  <section class="reveal">
+    <h2>拖拉看看：美容前 ⇆ 美容後</h2>
+    <p class="lead">同一隻小白，洗剪前後差這麼多。按住中間的圓點左右拖。</p>
+    <div class="ba-slider" id="ba" style="--pos:50%">
+      <img src="img/home-before.jpg" alt="美容前：毛又長又亂、蓋住眼睛的白色貴賓犬">
+      <img class="after" src="img/home-after.jpg" alt="美容後：剪成泰迪熊造型、戴橘色蝴蝶結的白色貴賓犬">
+      <span class="lab l">美容前</span><span class="lab r">美容後</span>
+      <div class="handle"></div>
+      <input type="range" min="0" max="100" value="50" aria-label="美容前後比較滑桿">
     </div>
-    <img src="images/photo-cindy.png" alt="剛美容完的白色貴賓犬，背景是乾淨的淺灰色攝影棚">
   </section>
 
-  <!-- 每個人做的工具 -->
   <section>
-    <h2>飼主最常用的三個小工具</h2>
+    <h2 class="reveal">飼主最常用的小工具</h2>
     <div class="grid">
-      <a class="card tool" href="calc.html">
-        <span class="icon">🧮</span><b>洗澡價格試算</b>
+      <a class="card tool reveal" href="calc.html" data-delay="0">
+        <img class="pic" src="img/home-bath.jpg" alt="泡泡澡裡開心的小狗">
+        <b>🧮 洗澡價格試算</b>
         <span>選體型、選服務、勾加購，馬上算出大概多少錢。</span>
         <span class="go">開始試算 →</span>
       </a>
-      <a class="card tool" href="look.html">
-        <span class="icon">🔍</span><b>犬貓危險食物查詢</b>
+      <a class="card tool reveal" href="look.html" data-delay="120">
+        <img class="pic" src="img/home-food.jpg" alt="小狗聞著葡萄和巧克力，旁邊有紅色警告標誌">
+        <b>🔍 犬貓危險食物查詢</b>
         <span>選狗或貓，看看哪些東西不能給牠吃、吃到會怎樣。</span>
         <span class="go">查查看 →</span>
       </a>
-      <a class="card tool" href="care.html">
-        <span class="icon">📋</span><b>美容後照護說明</b>
+      <a class="card tool reveal" href="care.html" data-delay="240">
+        <img class="pic" src="img/home-care.jpg" alt="包著毛巾在軟墊上休息的小狗">
+        <b>📋 美容後照護說明</b>
         <span>當天、三天內、一週內，回家後要注意的事。</span>
         <span class="go">看說明 →</span>
       </a>
     </div>
   </section>
 
-  <!-- W05 生的圖 -->
-  <section>
-    <h2>價目表與衛教卡</h2>
-    <div class="grid">
-      <figure class="card figure" style="margin:0">
-        <img src="images/price-amy.png" alt="木牌價目表：小型犬洗澡 600 元、小型犬洗剪 1200 元、大型犬洗澡 1000 元、指甲修剪 100 元">
-        <figcaption>店門口的價目表（點圖放大）</figcaption>
-      </figure>
-      <figure class="card figure" style="margin:0">
-        <img src="images/care-ben.png" alt="衛教卡「剃毛後三件事」：避免曬太陽、注意保暖、不要抓癢">
-        <figcaption>剃毛後三件事——櫃台可以印給飼主帶回家</figcaption>
-      </figure>
+  <section class="reveal">
+    <div class="card" style="display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center">
+      <span style="font-size:2.6rem">📅</span>
+      <div><b style="font-size:1.2rem">現在可以線上預約了</b><br><span class="lead" style="margin:0">登入會員、選日期和時段，約好就保留給你。每約一次蓋一個章，<strong>集滿 10 個送一次洗澡</strong>。</span></div>
+      <a class="btn" href="booking.html">去預約 →</a>
     </div>
   </section>
 
-  <section>
-    <h2>美容前後</h2>
-    <div class="card">
-      <div class="ba">
-        <figure class="figure"><img src="images/photo-cindy-before.png" alt="美容前：同一隻貴賓犬，背景雜亂"><figcaption>美容前</figcaption></figure>
-        <figure class="figure"><img src="images/photo-cindy.png" alt="美容後：同一隻貴賓犬，背景乾淨"><figcaption>美容後</figcaption></figure>
+  <section class="reveal">
+    <h2>客人怎麼說</h2>
+    <div class="reviews" id="reviews">
+      <div class="track">
+        <div class="rv"><div class="card"><div class="stars">★★★★★</div><p>我家球球很怕吹風機，這裡會停下來讓牠休息，回家完全不發抖。</p><span class="lead">— 球球媽（貴賓犬）</span></div></div>
+        <div class="rv"><div class="card"><div class="stars">★★★★★</div><p>老狗 14 歲了，美容師每 15 分鐘就讓牠躺一下，還會拍照傳給我看。</p><span class="lead">— 阿福爸（米克斯）</span></div></div>
+        <div class="rv"><div class="card"><div class="stars">★★★★☆</div><p>價格在網站上就算得出來，到現場沒有被加價，很安心。</p><span class="lead">— 小米姐姐（柴犬）</span></div></div>
+        <div class="rv"><div class="card"><div class="stars">★★★★★</div><p>線上預約好方便，半夜想到就約，不用等營業時間打電話。</p><span class="lead">— 豆花媽（法鬥）</span></div></div>
       </div>
+      <div class="dots"></div>
     </div>
+    <p class="lead" style="font-size:.85rem;margin-top:8px">＊評價為示範內容，人名都是虛構的。</p>
   </section>
 
-  <section>
+  <section class="reveal">
     <h2>預約方式</h2>
     <div class="card">
-      <p style="margin-top:0">📞 電話：<strong>0900-000-000</strong>　　💬 LINE：<strong>@maoxiaohai</strong>（示範用，不是真的）</p>
-      <p>⏰ 週二到週日 10:00–19:00，週一公休</p>
-      <div class="notice">這個網站<strong>沒有線上預約按鈕</strong>——因為網頁本身存不了資料，做了也是假的（第 7 週那個「預約成功」什麼都沒送出）。所以我們直接寫電話和 LINE。</div>
+      <p style="margin-top:0">📅 <a href="booking.html"><b>線上預約</b></a>（要先註冊會員）　　📞 0900-000-000　　💬 LINE @maoxiaohai（示範用，不是真的）</p>
+      <p style="margin-bottom:0">⏰ 週二到週日 10:00–19:00，週一公休</p>
     </div>
   </section>
 
-  <!-- 一個人的店：每一樣東西來自哪一週，發表時照這張表講 -->
-  <section>
+  <section class="reveal">
     <h2>這間店是怎麼做出來的</h2>
     <div class="card" style="overflow-x:auto">
       <table class="credit">
         <tr><th style="width:30%">東西</th><th>怎麼做的</th><th style="width:24%">來自哪一週</th></tr>
-        <tr><td><b>價目表、衛教卡、作品照</b></td><td>Gemini 生圖、修圖</td><td>W05</td></tr>
+        <tr><td><b>插畫</b></td><td>AI 生圖（同一種手繪風格）</td><td>W05</td></tr>
         <tr><td><b>店家介紹</b></td><td>Notebook 整理成 about.txt</td><td>W06</td></tr>
         <tr><td><b>洗澡價格試算</b></td><td>Canvas 做的第一個網頁</td><td>W07</td></tr>
         <tr><td><b>首頁</b></td><td>Antigravity 讀素材做出來</td><td>W11</td></tr>
         <tr><td><b>危險食物查詢</b></td><td>選什麼 → 顯示什麼的功能頁</td><td>W12</td></tr>
         <tr><td><b>美容後照護、全站外觀</b></td><td>說明頁＋統一外觀</td><td>W13</td></tr>
+        <tr><td><b>會員、線上預約、集點</b></td><td>Vercel＋Neon 資料庫</td><td>W14</td></tr>
       </table>
     </div>
     <p style="margin-top:12px">製作：王小美　·　<a href="入口頁.html">回毛孩商店街 →</a></p>
@@ -115,18 +125,47 @@
 
 <footer><div class="wrap">
   🏘️ <a href="入口頁.html">毛孩商店街</a>的一間店　·　© 毛小孩の家　·　AI 資訊素養與應用（通識3）期末作品範例　·　店名、人名、電話都是虛構的示範資料<br>
-  圖片由 Gemini 生成，有看不見的 AI 浮水印。
+  插畫由 AI 生成。
 </div></footer>
 
-<div id="zoom"><img alt=""></div>
+<script src="assets/fx.js"></script>
+<script src="assets/member.js"></script>
 <script>
-/* 點圖放大：價目表、衛教卡的字很小，手機上要能看清楚 */
-var zoom = document.getElementById("zoom");
-document.querySelectorAll(".figure img").forEach(function (img) {
-  img.addEventListener("click", function () { zoom.querySelector("img").src = img.src; zoom.classList.add("on"); });
-});
-zoom.addEventListener("click", function () { zoom.classList.remove("on"); });
-document.addEventListener("keydown", function (e) { if (e.key === "Escape") zoom.classList.remove("on"); });
+Member.paintNav();
+
+/* 營業中燈號：週二～週日 10–19 點（台灣時間） */
+(function () {
+  var now = new Date(Date.now() + (8 * 60 + new Date().getTimezoneOffset()) * 60000);
+  var day = now.getDay(), h = now.getHours() + now.getMinutes() / 60;
+  var open = day !== 1 && h >= 10 && h < 19;
+  var b = document.getElementById("openBadge");
+  b.classList.toggle("on", open);
+  b.lastElementChild.textContent = open ? "營業中・現在可以來" : (day === 1 ? "今天公休・週二見" : "休息中・營業 10:00–19:00");
+})();
+
+/* 美容前後滑桿 */
+(function () {
+  var box = document.getElementById("ba"), range = box.querySelector("input");
+  range.addEventListener("input", function () { box.style.setProperty("--pos", range.value + "%"); });
+})();
+
+/* 評價輪播：5 秒換一則，滑鼠移上去暫停 */
+(function () {
+  var box = document.getElementById("reviews"), track = box.querySelector(".track");
+  var n = track.children.length, i = 0, timer = null, dots = box.querySelector(".dots");
+  for (var k = 0; k < n; k++) {
+    var d = document.createElement("button"); d.type = "button"; d.setAttribute("aria-label", "第 " + (k + 1) + " 則");
+    d.onclick = (function (k) { return function () { go(k); }; })(k); dots.appendChild(d);
+  }
+  function go(k) {
+    i = (k + n) % n; track.style.transform = "translateX(" + (-100 * i) + "%)";
+    [].forEach.call(dots.children, function (b, j) { b.setAttribute("aria-current", j === i); });
+  }
+  function play() { timer = setInterval(function () { go(i + 1); }, 5000); }
+  box.onmouseenter = function () { clearInterval(timer); };
+  box.onmouseleave = play;
+  go(0); play();
+})();
 </script>
 </body>
 </html>

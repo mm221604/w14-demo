@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>線上預約｜毛小孩の家</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .step{display:flex;gap:10px;align-items:center;font-weight:800;margin:22px 0 10px}
+  .step i{font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+  .field{display:block;margin:10px 0}
+  .field span{display:block;font-weight:700;margin-bottom:4px}
+  .field input,.field select{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;font:inherit;background:var(--card);color:var(--ink)}
+  .msg{margin-top:12px;padding:10px 14px;border-radius:10px;display:none}
+  .msg.on{display:block} .msg.err{background:var(--warn-soft);color:var(--warn)} .msg.ok{background:var(--ok-soft);color:var(--ok)}
+  .summary{position:sticky;top:76px}
+  .layout{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
+  .layout>*{min-width:0}
+  @media (max-width:820px){.layout{grid-template-columns:1fr}.summary{position:static}}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<a class="district" href="入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐾 毛小孩<span>の</span>家</a>
+  <div class="links">
+    <a class="link" href="index.html">首頁</a>
+    <a class="link" href="calc.html">價格試算</a>
+    <a class="link" href="look.html">危險食物</a>
+    <a class="link" href="care.html">美容後照護</a>
+    <a class="link" href="booking.html" aria-current="page">📅 線上預約</a>
+    <a class="link" href="member.html" id="memberLink">🔑 會員登入</a>
+  </div>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1>📅 線上預約</h1>
+  <p class="lead">選日期、選時段，約好就幫你保留。灰掉的時段是已經被約走的。</p>
+
+  <div class="card notice" id="needLogin" hidden>
+    要先<b>登入會員</b>才能預約。<a href="member.html">去註冊／登入 →</a>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <div class="step"><i>1</i>選日期<span class="lead" style="margin:0;font-weight:400;font-size:.9rem">（明天起 30 天內，週一公休）</span></div>
+      <div class="days" id="days"></div>
+
+      <div class="step"><i>2</i>選時段</div>
+      <div class="slots" id="slots"><span class="lead">先選日期</span></div>
+
+      <div class="step"><i>3</i>填資料</div>
+      <form id="form">
+        <label class="field"><span>毛孩名字</span><input id="pet" list="myPets" maxlength="30" required placeholder="例如：小白"></label>
+        <datalist id="myPets"></datalist>
+        <label class="field"><span>服務項目</span>
+          <select id="service"><option>洗澡</option><option>洗澡＋剪毛</option><option>除蚤 SPA</option><option>指甲修剪</option></select></label>
+        <label class="field"><span>備註（怕吹風機、會咬人…）</span><input id="note" maxlength="200"></label>
+        <button class="btn" type="submit" id="submit" disabled>確認預約</button>
+        <div class="msg" id="msg" role="status"></div>
+      </form>
+      <p class="lead" style="font-size:.85rem;margin:14px 0 0">示範網站，請用<b>假資料</b>。預約資料只用來安排美容，不會給別人。</p>
+    </div>
+
+    <aside class="card summary">
+      <b>你的預約</b>
+      <p id="sum" class="lead" style="margin:.6em 0">還沒選日期和時段。</p>
+      <hr style="border:0;border-top:1px dashed var(--line)">
+      <p style="margin:.6em 0 0">已經約好的、集點卡，都在 <a href="member.html">會員專區</a>。</p>
+    </aside>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  🏘️ <a href="入口頁.html">毛孩商店街</a>的一間店　·　毛小孩の家　·　製作：王小美（這一頁是第 14 週的資料庫功能）
+</div></footer>
+
+<script src="assets/fx.js"></script>
+<script src="assets/member.js"></script>
+<script>
+var $ = function (id) { return document.getElementById(id); };
+var picked = { day: null, slot: null }, loggedIn = false;
+var WEEK = ["日", "一", "二", "三", "四", "五", "六"];
+
+function tw(offsetDays) {   // 台灣時間的某一天
+  var d = new Date(Date.now() + (8 * 60 + new Date().getTimezoneOffset()) * 60000);
+  d.setDate(d.getDate() + offsetDays);
+  return d;
+}
+function ymd(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function show(text, ok) { var m = $("msg"); m.textContent = text; m.className = "msg on " + (ok ? "ok" : "err"); }
+function paintSummary() {
+  $("sum").textContent = picked.day && picked.slot ? picked.day + "（週" + WEEK[new Date(picked.day + "T00:00").getDay()] + "）" + picked.slot
+    : picked.day ? picked.day + "，還沒選時段" : "還沒選日期和時段。";
+  $("submit").disabled = !(loggedIn && picked.day && picked.slot);
+}
+
+/* 日期：明天起 30 天 */
+for (var i = 1; i <= 30; i++) {
+  var d = tw(i), b = document.createElement("button");
+  b.type = "button"; b.dataset.day = ymd(d);
+  b.innerHTML = "<small>" + (d.getMonth() + 1) + "月</small><b>" + d.getDate() + "</b><small>週" + WEEK[d.getDay()] + "</small>";
+  if (d.getDay() === 1) { b.disabled = true; b.title = "週一公休"; }
+  b.onclick = function () { pickDay(this.dataset.day); };
+  $("days").appendChild(b);
+}
+
+async function pickDay(day) {
+  picked.day = day; picked.slot = null; paintSummary();
+  [].forEach.call($("days").children, function (b) { b.setAttribute("aria-pressed", b.dataset.day === day); });
+  $("slots").innerHTML = '<span class="lead">查詢空檔中…</span>';
+  try {
+    var r = await fetch("/api/bookings?date=" + day), d = await r.json();
+    $("slots").innerHTML = "";
+    d.slots.forEach(function (s) {
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = s; b.disabled = d.taken.indexOf(s) >= 0;
+      if (b.disabled) b.title = "已被預約";
+      b.onclick = function () {
+        picked.slot = s; paintSummary();
+        [].forEach.call($("slots").children, function (x) { x.setAttribute("aria-pressed", x === b); });
+      };
+      $("slots").appendChild(b);
+    });
+  } catch (e) { $("slots").innerHTML = '<span class="lead">查不到空檔，請稍後再試</span>'; }
+}
+
+$("form").onsubmit = async function (e) {
+  e.preventDefault();
+  $("submit").disabled = true;
+  try {
+    await Member.api("/api/bookings", { method: "POST", body: {
+      day: picked.day, slot: picked.slot, pet_name: $("pet").value.trim(), service: $("service").value, note: $("note").value.trim()
+    } });
+    show("預約好了！" + picked.day + " " + picked.slot + "，到會員專區看你的集點卡 🎉", true);
+    var day = picked.day; e.target.reset(); await pickDay(day);
+  } catch (err) {
+    show(err.message);
+    if (picked.day) await pickDay(picked.day);
+  }
+};
+
+(async function () {
+  var user = await Member.paintNav();
+  loggedIn = !!user; $("needLogin").hidden = loggedIn; paintSummary();
+  if (!user) { $("form").querySelectorAll("input,select,button").forEach(function (x) { x.disabled = true; }); return; }
+  // 把會員專區存過的毛孩名字變成下拉建議
+  try {
+    var pets = (await Member.api("/api/pets")).items;
+    $("myPets").innerHTML = pets.map(function (p) { return '<option value="' + Member.esc(p.pet_name) + '">'; }).join("");
+  } catch (e) {}
+})();
+paintSummary();
+</script>
+</body>
+</html>

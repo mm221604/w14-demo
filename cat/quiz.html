@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>貓咪個性測驗｜喵喵美容室</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="district" href="../入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐈 喵喵<span>美容室</span></a>
+  <a class="link" href="index.html">首頁</a>
+  <a class="link" href="quiz.html" aria-current="page">個性測驗</a>
+  <a class="link" href="tools.html">價格與週期</a>
+  <a class="link" href="stay.html">寄宿・寫真</a>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1 style="color:var(--purple-dark)">😺 你家貓是哪一型？</h1>
+  <p style="color:var(--muted)">回答 3 題，美容師告訴你牠適合怎麼美容。</p>
+
+  <div class="quiz" id="quiz" aria-live="polite"></div>
+</main>
+
+<footer><div class="wrap">
+  © 喵喵美容室　·　這一頁：林小華（第 12 週的功能頁，展示版改成測驗）　·　<a href="../入口頁.html">毛孩商店街</a>的一間店　·　插畫由 AI 生成
+</div></footer>
+
+<script>
+/* 每個答案替四種類型加分，最後最高分的就是結果 */
+var Q = [
+  { t: "有客人來家裡，牠會……", a: [
+    ["跑過去聞、討摸", { friendly: 2 }], ["躲到床底下，等人走了才出來", { shy: 2 }],
+    ["遠遠盯著，靠太近就哈氣", { bite: 2 }], ["抬頭看一眼，繼續睡", { old: 2 }]] },
+  { t: "幫牠剪指甲的時候……", a: [
+    ["乖乖讓你剪，還會呼嚕", { friendly: 2 }], ["一直發抖、想逃", { shy: 2 }],
+    ["扭來扭去，會咬人", { bite: 2 }], ["不太動，但剪久了會累", { old: 1, friendly: 1 }]] },
+  { t: "牠幾歲了？", a: [
+    ["1 歲以下的小貓", { friendly: 1, shy: 1 }], ["1～6 歲", { friendly: 1, bite: 1 }],
+    ["7～10 歲", { old: 1, shy: 1 }], ["10 歲以上", { old: 3 }]] }
+];
+var R = {
+  friendly: { name: "撒嬌黏人型", img: "cat-type-friendly", tag: "一次做完就好", tips: ["洗澡、吹乾、梳毛一次完成，約 60 分鐘", "很適合加做獅子頭造型", "做完拍美容後寫真，牠一定很上鏡"] },
+  shy:      { name: "膽小害羞型", img: "cat-type-shy",      tag: "分兩次、慢慢來", tips: ["第一次只洗澡，吹風機開最小聲", "第二次再梳毛、剪指甲", "帶牠平常睡的毯子，有自己的味道比較安心"] },
+  bite:     { name: "傲嬌暴走型", img: "cat-type-bite",     tag: "先安撫，必要時戴頭套", tips: ["美容師戴手套，用透氣的貓咪頭套", "只做必要的項目，不硬做造型", "預約時先說，我們排最安靜的時段"] },
+  old:      { name: "慢活長輩型", img: "cat-type-old",      tag: "縮短時間、先問健康", tips: ["美容前先問有沒有心臟、腎臟的問題", "每 15 分鐘讓牠休息一下", "有慢性病的貓，先問過獸醫可不可以洗澡"] }
+};
+var box = document.getElementById("quiz"), i = 0, score = { friendly: 0, shy: 0, bite: 0, old: 0 };
+
+function ask() {
+  var q = Q[i];
+  box.innerHTML = '<div class="qbar"><i style="width:' + (i / Q.length * 100) + '%"></i></div>' +
+    '<div style="color:var(--muted);font-weight:700">第 ' + (i + 1) + ' / ' + Q.length + ' 題</div>' +
+    '<div class="qtitle">' + q.t + '</div><div class="opts">' +
+    q.a.map(function (a, k) { return '<button type="button" data-k="' + k + '">' + a[0] + "</button>"; }).join("") + "</div>";
+  box.querySelectorAll("button").forEach(function (b) {
+    b.onclick = function () {
+      var add = q.a[b.dataset.k][1];
+      Object.keys(add).forEach(function (k) { score[k] += add[k]; });
+      i++; i < Q.length ? ask() : result();
+    };
+  });
+  var first = box.querySelector("button"); if (first && i > 0) first.focus();
+}
+function result() {
+  var best = Object.keys(score).sort(function (a, b) { return score[b] - score[a]; })[0], r = R[best];
+  box.innerHTML = '<div class="qbar"><i style="width:100%"></i></div><div class="result">' +
+    '<img src="../img/' + r.img + '.jpg" alt="' + r.name + '的貓">' +
+    '<div><div style="color:var(--muted)">你家貓是</div><h2 style="margin:.1em 0 .3em;font-size:2rem">' + r.name + '</h2>' +
+    '<span class="tagline">' + r.tag + '</span><ul>' + r.tips.map(function (t) { return "<li>" + t + "</li>"; }).join("") + "</ul>" +
+    '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" id="again">再測一次</button>' +
+    '<a class="btn soft" style="color:var(--purple-dark);border-color:var(--purple)" href="tools.html">算價錢 →</a></div></div></div>';
+  document.getElementById("again").onclick = function () { i = 0; score = { friendly: 0, shy: 0, bite: 0, old: 0 }; ask(); };
+}
+ask();
+</script>
+</body>
+</html>

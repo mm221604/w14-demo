@@ -17,7 +17,8 @@
     <a class="link" href="calc.html">價格試算</a>
     <a class="link" href="look.html" aria-current="page">危險食物</a>
     <a class="link" href="care.html">美容後照護</a>
-    <a class="link" href="member.html">🔑 會員登入</a>
+    <a class="link" href="booking.html">📅 線上預約</a>
+    <a class="link" href="member.html" id="memberLink">🔑 會員登入</a>
   </div>
 </div></nav>
 
@@ -88,5 +89,7 @@ function render() {
 document.querySelectorAll("input").forEach(function (i) { i.addEventListener("input", render); i.addEventListener("change", render); });
 render();
 </script>
+<script src="assets/member.js"></script>
+<script>Member.paintNav();</script>
 </body>
 </html>
