@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>毛孩商店街｜三間寵物店的商圈首頁</title>
+<meta name="description" content="期末範例：W16 的商圈首頁。毛孩商店街有三間店，選你的需求，它告訴你該去哪一家。">
+<style>
+  /* 商圈首頁自己的樣式。三間店各有各的風格，這一頁只負責「整條街」 */
+  :root{
+    --sky:#ffe9d2; --sky2:#fff7ee; --ground:#e9d6c1; --road:#5b4a3f; --ink:#3a2c20; --muted:#8a7766;
+    --district:#d9733a;                     /* 商圈色：每間店最上面那條商圈帶也用這個顏色 */
+    --home:#c9692e; --van:#1f8a86; --cat:#8a63c4;
+    --card:#ffffff; --line:#eadccd; --radius:18px;
+    --shadow:0 2px 4px rgba(80,50,30,.06), 0 14px 32px rgba(80,50,30,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fffaf4;color:var(--ink);line-height:1.7;
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+  a{color:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+
+  /* ── 招牌 ── */
+  .gate{background:var(--district);color:#fff;text-align:center;padding:14px 16px 12px}
+  .gate .t{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;letter-spacing:.12em}
+  .gate .s{opacity:.9;font-size:.98rem}
+
+  /* ── 街景 ── */
+  .street{background:linear-gradient(var(--sky2),var(--sky) 70%);padding:28px 0 0;position:relative;overflow:hidden}
+  .cloud{position:absolute;font-size:2.4rem;opacity:.75}
+  .shops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,2.4vw,28px);align-items:end;position:relative;z-index:1}
+  .store{--c:#999;display:block;text-decoration:none;color:var(--ink);transition:transform .2s}
+  .store:hover,.store:focus-visible{transform:translateY(-8px)}
+  .roof{height:16px;background:var(--c);border-radius:8px 8px 0 0;margin:0 6px}
+  .awning{height:34px;margin:0 -4px;border-radius:0 0 14px 14px;
+    background:repeating-linear-gradient(90deg,var(--c) 0 22px,#fff 22px 44px);box-shadow:0 6px 10px rgba(0,0,0,.08)}
+  .facade{background:#fff;border:3px solid var(--c);border-top:0;margin:0 6px;padding:12px 10px 0;text-align:center}
+  .sign{display:inline-block;background:var(--c);color:#fff;font-weight:800;border-radius:10px;padding:4px 12px;
+    font-size:clamp(.82rem,2vw,1.05rem);white-space:nowrap}
+  .window{margin:12px auto 0;display:flex;gap:8px;justify-content:center;align-items:flex-end}
+  .glass{width:46%;aspect-ratio:1;border-radius:10px;background:color-mix(in srgb,var(--c) 14%,#fff);
+    border:3px solid color-mix(in srgb,var(--c) 45%,#fff);display:flex;align-items:center;justify-content:center;
+    font-size:clamp(1.8rem,6vw,3rem)}
+  .door{width:30%;aspect-ratio:.62;background:var(--c);border-radius:10px 10px 0 0;position:relative}
+  .door::after{content:"";position:absolute;right:16%;top:52%;width:7px;height:7px;border-radius:50%;background:#fff}
+  .store .tag{display:block;text-align:center;font-size:.85rem;color:var(--muted);margin:8px 0 0;min-height:2.6em}
+  .sidewalk{height:22px;background:var(--ground);margin-top:-2px;position:relative;z-index:0}
+  .road{height:46px;background:var(--road);position:relative}
+  .road::after{content:"";position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;
+    background:repeating-linear-gradient(90deg,#f6d27a 0 34px,transparent 34px 68px)}
+  .walker{position:absolute;bottom:4px;font-size:1.8rem;z-index:2}
+  @media (max-width:640px){ .store .tag{display:none} .walker{display:none}
+    .sign{white-space:normal;line-height:1.3;padding:4px 6px} .facade{padding:8px 4px 0} .window{gap:4px} }
+
+  section{margin:44px 0}
+  h2{font-size:1.45rem;margin:0 0 .5em}
+  .lead{color:var(--muted);margin:0 0 1em}
+
+  /* ── 我要找哪一家 ── */
+  .finder{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:stretch}
+  @media (max-width:760px){ .finder{grid-template-columns:1fr} }
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+  .q{font-weight:800;margin:4px 0 10px}
+  .tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:18px}
+  .tiles label{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;cursor:pointer;
+    border:2px solid var(--line);border-radius:14px;padding:12px 8px;background:#fffaf4;font-size:.95rem;user-select:none}
+  .tiles label .e{font-size:1.9rem;line-height:1.2}
+  .tiles input{position:absolute;opacity:0;pointer-events:none}
+  .tiles label:has(input:checked){border-color:var(--district);background:#fdeadc}
+  .tiles label:has(input:focus-visible){outline:3px solid var(--district);outline-offset:2px}
+  .answer{border-radius:var(--radius);color:#fff;padding:22px;display:flex;flex-direction:column;gap:8px;
+    background:var(--c,#999);box-shadow:var(--shadow);transition:background .25s}
+  .answer .k{opacity:.85;font-size:.9rem}
+  .answer .em{font-size:3.2rem;line-height:1}
+  .answer .n{font-size:1.7rem;font-weight:900}
+  .answer .go{margin-top:auto;align-self:flex-start;background:#fff;color:var(--c);font-weight:800;
+    text-decoration:none;padding:10px 18px;border-radius:12px}
+
+  /* ── 店卡 ── */
+  .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .shop{--c:#999;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);
+    text-decoration:none;color:var(--ink);display:flex;flex-direction:column;transition:transform .2s}
+  .shop:hover{transform:translateY(-4px)}
+  .shop .band{background:var(--c);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px}
+  .shop .band .e{font-size:2.2rem}
+  .shop .band b{font-size:1.2rem}
+  .shop .body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .shop .body span{color:var(--muted);font-size:.95rem}
+  .shop .go{margin-top:auto;color:var(--c);font-weight:800}
+  .team{display:flex;gap:12px;flex-wrap:wrap}
+  .person{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 16px}
+  .note{color:var(--muted);font-size:.9rem;margin-top:12px}
+  code{background:#f3e6d8;border-radius:6px;padding:1px 6px}
+  footer{margin-top:56px;background:var(--road);color:#f3e6d8;padding:22px 0 30px;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<!-- W16：組員討論後由一人做這頁，推到自己的 repo W16；只放連結，不搬組員的檔案 -->
+<header class="gate">
+  <div class="t">🏘️ 毛孩商店街</div>
+  <div class="s">一條街、三間店　·　毛孩要的都找得到</div>
+</header>
+
+<div class="street" aria-label="商店街街景，點一間店進去逛">
+  <span class="cloud" style="left:6%;top:6px">☁️</span>
+  <span class="cloud" style="right:10%;top:18px">☁️</span>
+  <div class="wrap">
+    <div class="shops">
+      <a class="store" href="index.html" style="--c:var(--home)">
+        <div class="roof"></div><div class="awning"></div>
+        <div class="facade"><span class="sign">毛小孩の家</span>
+          <div class="window"><div class="glass">🐩</div><div class="door"></div></div></div>
+        <span class="tag">社區美容工作室</span>
+      </a>
+      <a class="store" href="van/index.html" style="--c:var(--van)">
+        <div class="roof"></div><div class="awning"></div>
+        <div class="facade"><span class="sign">汪汪行動美容車</span>
+          <div class="window"><div class="glass">🚐</div><div class="door"></div></div></div>
+        <span class="tag">開到你家樓下</span>
+      </a>
+      <a class="store" href="cat/index.html" style="--c:var(--cat)">
+        <div class="roof"></div><div class="awning"></div>
+        <div class="facade"><span class="sign">喵喵美容室</span>
+          <div class="window"><div class="glass">🐈</div><div class="door"></div></div></div>
+        <span class="tag">只接貓的美容室</span>
+      </a>
+    </div>
+  </div>
+  <div class="sidewalk"></div>
+  <div class="road"><span class="walker" style="left:18%">🐕‍🦺</span><span class="walker" style="left:64%">🚶‍♀️🐕</span></div>
+</div>
+
+<main class="wrap">
+
+  <!-- 跨店的功能：選需求 → 推薦哪一家，按鈕直接連過去 -->
+  <section id="find">
+    <h2>🔍 我要找哪一家？</h2>
+    <p class="lead">選兩下，告訴你該去哪一間店。</p>
+    <div class="finder">
+      <div class="panel">
+        <div class="q">你的毛孩是</div>
+        <div class="tiles">
+          <label><input type="radio" name="pet" value="dog" checked><span class="e">🐶</span>狗</label>
+          <label><input type="radio" name="pet" value="cat"><span class="e">🐱</span>貓</label>
+        </div>
+        <div class="q">你最在意的是</div>
+        <div class="tiles">
+          <label><input type="radio" name="need" value="price" checked><span class="e">💰</span>先知道多少錢</label>
+          <label><input type="radio" name="need" value="home"><span class="e">🏠</span>不方便出門</label>
+          <label><input type="radio" name="need" value="shy"><span class="e">🙈</span>牠很膽小怕吵</label>
+          <label><input type="radio" name="need" value="after"><span class="e">📋</span>美容完要注意什麼</label>
+        </div>
+      </div>
+      <div class="answer" id="answer" aria-live="polite">
+        <span class="k">推薦你去</span>
+        <span class="em" id="em"></span>
+        <span class="n" id="shop"></span>
+        <span id="why"></span>
+        <a class="go" id="go" href="#">進去看看 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>三間店</h2>
+    <div class="cards">
+      <a class="shop" href="index.html" style="--c:var(--home)">
+        <div class="band"><span class="e">🐾</span><div><b>毛小孩の家</b><br><small>店長　王小美</small></div></div>
+        <div class="body"><span>社區型寵物美容工作室，一次只接一隻。</span><span>🧮 洗澡價格試算・🔍 危險食物查詢・📋 美容後照護・🔑 會員專區</span><span class="go">進去逛 →</span></div>
+      </a>
+      <a class="shop" href="van/index.html" style="--c:var(--van)">
+        <div class="band"><span class="e">🚐</span><div><b>汪汪行動美容車</b><br><small>店長　陳大明</small></div></div>
+        <div class="body"><span>美容車開到你家樓下，毛孩不用出門。</span><span>📍 選距離，算車馬費、看哪天有空</span><span class="go">進去逛 →</span></div>
+      </a>
+      <a class="shop" href="cat/index.html" style="--c:var(--cat)">
+        <div class="band"><span class="e">🐈</span><div><b>喵喵美容室</b><br><small>店長　林小華</small></div></div>
+        <div class="body"><span>只接貓、聽不到狗叫的美容室。</span><span>😺 選貓的個性，看適合怎麼美容</span><span class="go">進去逛 →</span></div>
+      </a>
+    </div>
+    <p class="note">真正做的時候，每間店連到店長自己的網址（<code>https://店長帳號.github.io/W11/</code>）；範例為了放在一起，三間店放在同一個資料夾。<br>
+      每間店<strong>長得不一樣</strong>，但最上面都有一條<strong>橘色的「毛孩商店街」商圈帶</strong>，點了回到這一頁。</p>
+  </section>
+
+  <section>
+    <h2>我們這組</h2>
+    <div class="team">
+      <span class="person">🐾 王小美（代表、做這一頁）</span>
+      <span class="person">🚐 陳大明</span>
+      <span class="person">🐈 林小華</span>
+    </div>
+  </section>
+
+</main>
+
+<footer><div class="wrap">
+  © 毛孩商店街　·　AI 資訊素養與應用（通識3）期末作品範例：W16 商圈首頁　·　店名、人名、電話都是虛構的示範資料
+</div></footer>
+
+<script>
+/* 推薦規則：先看需不需要到府，再看是不是貓。每一種組合都要有答案，不能選了卻什麼都沒出現 */
+var SHOP = {
+  home:   { c: "var(--van)",  em: "🚐", name: "汪汪行動美容車", url: "van/fee.html",   why: "美容車開到你家樓下，先看你家那一區的車馬費和有空的時段。" },
+  cat:    { c: "var(--cat)",  em: "🐈", name: "喵喵美容室",     url: "cat/guide.html", why: "只接貓、吹風機開最小聲，先選你家貓的個性，看會怎麼幫牠美容。" },
+  shyDog: { c: "var(--van)",  em: "🚐", name: "汪汪行動美容車", url: "van/index.html", why: "膽小的狗在自己家樓下比較不緊張，美容車一次只做一隻。" },
+  price:  { c: "var(--home)", em: "🐾", name: "毛小孩の家",     url: "calc.html",      why: "選體型和服務，價格馬上算出來。" },
+  after:  { c: "var(--home)", em: "🐾", name: "毛小孩の家",     url: "care.html",      why: "當天、三天內、一週內要注意的事，可以印出來貼冰箱。" }
+};
+function picked(name) { return document.querySelector('input[name="' + name + '"]:checked').value; }
+function recommend() {
+  var pet = picked("pet"), need = picked("need"), s;
+  if (need === "home") s = SHOP.home;
+  else if (pet === "cat") s = SHOP.cat;
+  else if (need === "shy") s = SHOP.shyDog;
+  else s = SHOP[need];
+  document.getElementById("answer").style.setProperty("--c", s.c);
+  document.getElementById("em").textContent = s.em;
+  document.getElementById("shop").textContent = s.name;
+  document.getElementById("why").textContent = s.why;
+  document.getElementById("go").href = s.url;
+}
+document.querySelectorAll("input").forEach(function (i) { i.addEventListener("change", recommend); });
+recommend();
+</script>
+</body>
+</html>

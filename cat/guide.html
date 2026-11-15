@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>個性美容指南｜喵喵美容室</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="district" href="../入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐈 喵喵<span>美容室</span></a>
+  <a class="link" href="index.html">首頁</a>
+  <a class="link" href="guide.html" aria-current="page">個性美容指南</a>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1 style="color:var(--purple-dark)">你家貓是哪一種？</h1>
+  <p style="color:var(--muted)">點最像的那一個，美容師會告訴你怎麼幫牠美容、主人要先準備什麼。</p>
+
+  <div class="moods">
+    <label><input type="radio" name="type" value="friendly" checked><span class="e">😻</span>黏人、給摸</label>
+    <label><input type="radio" name="type" value="shy"><span class="e">🙀</span>膽小、一有聲音就躲</label>
+    <label><input type="radio" name="type" value="bite"><span class="e">😾</span>不爽就咬、會哈氣</label>
+    <label><input type="radio" name="type" value="old"><span class="e">🐈</span>10 歲以上的老貓</label>
+  </div>
+
+  <div class="talk" aria-live="polite">
+    <span class="who" aria-hidden="true">💇‍♀️</span>
+    <div class="bubble"><b id="title"></b><ul id="tips"></ul></div>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  © 喵喵美容室　·　這一頁：林小華（第 12 週的功能頁）　·　<a href="../入口頁.html">毛孩商店街</a>的一間店
+</div></footer>
+
+<script>
+var GUIDE = {
+  friendly: { title: "一次做完就好", tips: ["洗澡、吹乾、梳毛一次完成，約 60 分鐘", "可以加做獅子頭造型", "主人不用陪，做完我們傳照片給你"] },
+  shy:      { title: "分兩次、慢慢來", tips: ["第一次只洗澡，吹風機開最小聲", "第二次再梳毛、剪指甲", "請帶牠平常睡的毯子，有自己的味道比較安心"] },
+  bite:     { title: "先安撫，必要時戴頭套", tips: ["美容師戴手套，會用透氣的貓咪頭套", "只做必要的項目，不硬做造型", "預約時一定要先說，我們會排比較空的時段"] },
+  old:      { title: "縮短時間、先問健康", tips: ["美容前先問有沒有心臟、腎臟的問題", "每 15 分鐘讓牠休息一下", "有慢性病的貓，請先問過獸醫可不可以洗澡"] }
+};
+function show() {
+  var g = GUIDE[document.querySelector('input[name="type"]:checked').value];
+  document.getElementById("title").textContent = g.title;
+  document.getElementById("tips").innerHTML = g.tips.map(function (t) { return "<li>" + t + "</li>"; }).join("");
+}
+document.querySelectorAll("input").forEach(function (i) { i.addEventListener("change", show); });
+show();
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+/* 喵喵美容室｜林小華自己的樣式：薰衣草紫＋粉紅、圓角、腳印，安靜溫柔的感覺 */
+:root{
+  --bg:#fbf7ff; --card:#ffffff; --ink:#3b2d52; --muted:#7f6f99; --line:#e6dcf5;
+  --purple:#8a63c4; --purple-dark:#6a46a3; --pink:#f6b8cc; --pink-soft:#fde9f0;
+  --radius:28px; --shadow:0 2px 4px rgba(90,60,140,.06), 0 14px 32px rgba(90,60,140,.13);
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);line-height:1.8;
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  /* 淡淡的腳印底紋 */
+  background-color:var(--bg);
+  background-image:radial-gradient(circle at 20px 20px,rgba(138,99,196,.07) 6px,transparent 7px),
+                   radial-gradient(circle at 60px 64px,rgba(246,184,204,.18) 6px,transparent 7px);
+  background-size:80px 88px}
+a{color:var(--purple)}
+.wrap{max-width:940px;margin:0 auto;padding:0 16px}
+
+/* 商圈帶：三間店都有，同名同色，點了回商圈首頁 */
+.district{display:block;background:#d9733a;color:#fff;text-align:center;font-size:.85rem;font-weight:700;
+  text-decoration:none;padding:5px 12px;letter-spacing:.06em}
+.district:hover{background:#c0612b}
+
+.nav .wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:16px;padding-bottom:6px}
+.brand{font-weight:900;font-size:1.25rem;color:var(--purple-dark);text-decoration:none;margin-right:auto}
+.brand span{color:#d46a92}
+.nav a.link{color:var(--muted);text-decoration:none;padding:6px 16px;border-radius:999px;font-weight:700}
+.nav a.link[aria-current="page"]{background:var(--purple);color:#fff}
+
+/* 首頁：一隻用 CSS 畫的貓 */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:24px 0}
+.hero h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.3;margin:0 0 .3em;color:var(--purple-dark)}
+.hero p{color:var(--muted);font-size:1.05rem}
+@media (max-width:720px){ .hero{grid-template-columns:1fr} }
+.catface{position:relative;width:min(260px,70vw);aspect-ratio:1.05;margin:20px auto 0}
+.catface .head{position:absolute;inset:18% 0 0;background:var(--purple);border-radius:46% 46% 42% 42%}
+.catface .ear{position:absolute;top:2%;width:34%;aspect-ratio:1;background:var(--purple);
+  clip-path:polygon(50% 0,100% 100%,0 100%)}
+.catface .ear.l{left:4%;transform:rotate(-12deg)} .catface .ear.r{right:4%;transform:rotate(12deg)}
+.catface .ear::after{content:"";position:absolute;inset:30% 26% 0;background:var(--pink);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.catface .eye{position:absolute;top:46%;width:13%;aspect-ratio:.8;background:#fff8d6;border-radius:50%}
+.catface .eye::after{content:"";position:absolute;inset:15% 38%;background:#3b2d52;border-radius:50%}
+.catface .eye.l{left:26%} .catface .eye.r{right:26%}
+.catface .nose{position:absolute;top:63%;left:50%;width:9%;aspect-ratio:1.3;background:var(--pink);
+  transform:translateX(-50%);border-radius:50% 50% 60% 60%}
+.catface .blush{position:absolute;top:64%;width:14%;aspect-ratio:2;background:rgba(246,184,204,.7);border-radius:50%}
+.catface .blush.l{left:14%} .catface .blush.r{right:14%}
+
+.btn{display:inline-block;background:var(--purple);color:#fff;font-weight:800;text-decoration:none;
+  padding:12px 24px;border-radius:999px;box-shadow:var(--shadow)}
+
+section{margin:40px 0}
+h2{font-size:1.4rem;margin:0 0 .6em;color:var(--purple-dark)}
+h2::before{content:"🐾 "}
+.why{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.why div{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-align:center}
+.why .e{font-size:2.2rem}
+.menu{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 24px}
+.menu .row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:2px dotted var(--line)}
+.menu .row:last-child{border-bottom:0}
+.menu .p{font-weight:900;color:var(--purple-dark);white-space:nowrap}
+
+/* 功能頁：選個性 */
+.back{display:inline-block;margin:18px 0 0;color:var(--muted);text-decoration:none}
+.moods{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:10px}
+.moods label{position:relative;background:var(--card);border:3px solid var(--line);border-radius:var(--radius);
+  padding:16px 10px;text-align:center;cursor:pointer;user-select:none;transition:transform .15s}
+.moods label:hover{transform:translateY(-3px)}
+.moods .e{display:block;font-size:2.6rem;line-height:1.3}
+.moods input{position:absolute;opacity:0;pointer-events:none}
+.moods label:has(input:checked){border-color:var(--purple);background:var(--pink-soft)}
+.moods label:has(input:focus-visible){outline:3px solid var(--purple);outline-offset:2px}
+.talk{display:flex;gap:14px;align-items:flex-start;margin-top:24px}
+.talk .who{font-size:3rem;line-height:1}
+.bubble{position:relative;background:var(--purple);color:#fff;border-radius:var(--radius);padding:18px 22px;flex:1}
+.bubble::before{content:"";position:absolute;left:-12px;top:22px;border:8px solid transparent;border-right:12px solid var(--purple)}
+.bubble b{font-size:1.35rem}
+.bubble ul{margin:.4em 0 0;padding-left:1.2em}
+
+footer{margin-top:56px;background:var(--purple-dark);color:#efe6fb;padding:22px 0 30px;font-size:.9rem}
+footer a{color:var(--pink)}

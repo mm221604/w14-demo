@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>車馬費與時段｜汪汪行動美容車</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="district" href="../入口頁.html">🏘️ 毛孩商店街　·　回商圈首頁</a>
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🚐 汪汪<span>行動</span>美容車</a>
+  <a class="link" href="index.html">首頁</a>
+  <a class="link" href="fee.html" aria-current="page">車馬費與時段</a>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1>📍 車馬費與可預約時段</h1>
+  <p style="color:var(--muted)">選你家離商店街多遠、想約哪一天，下面的車票就會告訴你車馬費和有空的時段。</p>
+
+  <div class="panel">
+    <div class="q">① 你家離商店街大概多遠？</div>
+    <div class="route">
+      <label><input type="radio" name="dist" value="near" checked><span class="dot">🏠</span>3 公里內</label>
+      <label><input type="radio" name="dist" value="mid"><span class="dot">🏘️</span>3–8 公里</label>
+      <label><input type="radio" name="dist" value="far"><span class="dot">🌳</span>8–15 公里</label>
+      <label><input type="radio" name="dist" value="out"><span class="dot">⛰️</span>15 公里以上</label>
+    </div>
+
+    <div class="q">② 想約哪一天？</div>
+    <div class="days">
+      <label><input type="radio" name="day" value="wd" checked>平日（週二到週五）</label>
+      <label><input type="radio" name="day" value="sat">週六</label>
+      <label><input type="radio" name="day" value="sun">週日</label>
+    </div>
+
+    <div class="pass" aria-live="polite">
+      <div class="stub"><div>車馬費</div><div class="big" id="fee"></div></div>
+      <div class="info" id="slots"></div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  © 汪汪行動美容車　·　這一頁：陳大明（第 12 週的功能頁）　·　<a href="../入口頁.html">毛孩商店街</a>的一間店
+</div></footer>
+
+<script>
+/* 距離 → 車馬費。15 公里以上車開不過去，直接說不能接，不要算出一個做不到的價錢 */
+var FEE = { near: 0, mid: 150, far: 300, out: null };
+/* 每天可預約的時段；8 公里以上來回比較久，只排上午 */
+var SLOTS = {
+  wd:  ["10:00–11:30", "13:30–15:00", "15:30–17:00"],
+  sat: ["09:30–11:00", "11:30–13:00", "14:00–15:30", "16:00–17:30"],
+  sun: []
+};
+function picked(name) { return document.querySelector('input[name="' + name + '"]:checked').value; }
+function show() {
+  var dist = picked("dist"), day = picked("day");
+  var fee = FEE[dist], slots = SLOTS[day];
+  var feeEl = document.getElementById("fee"), info = document.getElementById("slots");
+  if (fee === null) {
+    feeEl.textContent = "不服務";
+    info.textContent = "15 公里以上車開不過去，歡迎到商店街的「毛小孩の家」。";
+    return;
+  }
+  feeEl.textContent = fee === 0 ? "免費" : fee + " 元";
+  if (dist === "far") slots = slots.filter(function (t) { return t < "13"; });
+  info.innerHTML = slots.length
+    ? "這天可以約：<br>" + slots.map(function (t) { return '<span class="slot">' + t + "</span>"; }).join("")
+    : "這天公休，換一天看看。";
+}
+document.querySelectorAll("input").forEach(function (i) { i.addEventListener("change", show); });
+show();
+</script>
+</body>
+</html>
