@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>洗澡價格試算｜毛小孩の家</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐾 毛小孩<span>の</span>家</a>
+  <div class="links">
+    <a class="link" href="index.html">首頁</a>
+    <a class="link" href="calc.html" aria-current="page">價格試算</a>
+    <a class="link" href="look.html">危險食物</a>
+    <a class="link" href="care.html">美容後照護</a>
+  </div>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1>🧮 洗澡價格試算</h1>
+  <p class="lead">選好之後價格會自動算出來。實際價格以現場評估為準。</p>
+
+  <div class="card">
+    <label class="q">① 牠是哪一種？</label>
+    <div class="choices" id="size">
+      <label><input type="radio" name="size" value="small" checked> 小型犬（10 公斤以下）</label>
+      <label><input type="radio" name="size" value="medium"> 中型犬（10–25 公斤）</label>
+      <label><input type="radio" name="size" value="large"> 大型犬（25 公斤以上）</label>
+      <label><input type="radio" name="size" value="cat"> 貓</label>
+    </div>
+
+    <label class="q">② 要做什麼？</label>
+    <div class="choices">
+      <label><input type="radio" name="service" value="bath" checked> 洗澡</label>
+      <label><input type="radio" name="service" value="cut"> 洗澡 ＋ 剪毛</label>
+    </div>
+
+    <label class="q">③ 毛有沒有打結？</label>
+    <div class="choices">
+      <label><input type="radio" name="knot" value="0" checked> 沒有</label>
+      <label><input type="radio" name="knot" value="200"> 輕微（梳得開）</label>
+      <label><input type="radio" name="knot" value="500"> 嚴重（要剃掉）</label>
+    </div>
+
+    <label class="q">④ 加購（可複選）</label>
+    <div class="choices">
+      <label><input type="checkbox" name="add" value="100" data-name="指甲修剪"> 指甲修剪 ＋100</label>
+      <label><input type="checkbox" name="add" value="150" data-name="刷牙"> 刷牙 ＋150</label>
+      <label><input type="checkbox" name="add" value="300" data-name="除蚤 SPA"> 除蚤 SPA ＋300</label>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <div>預估費用</div>
+      <div class="big" id="total">600 元</div>
+      <ul id="detail"></ul>
+    </div>
+  </div>
+
+  <p class="lead" style="margin-top:16px">價格跟店門口的價目表一致：小型犬洗澡 600、小型犬洗剪 1200、大型犬洗澡 1000、指甲修剪 100。</p>
+</main>
+
+<footer><div class="wrap">🏘️ <a href="入口頁.html">毛孩商店街</a>的一間店　·　毛小孩の家　·　製作：王小美（這一頁第 7 週用 Canvas 做的，第 12 週再用 Antigravity 改好）</div></footer>
+
+<script>
+/* 基本價：[洗澡, 洗剪]。和首頁價目表的數字要一樣，改價格時兩邊一起改 */
+var PRICE = {
+  small:  { label: "小型犬", bath: 600,  cut: 1200 },
+  medium: { label: "中型犬", bath: 800,  cut: 1500 },
+  large:  { label: "大型犬", bath: 1000, cut: 1900 },
+  cat:    { label: "貓",     bath: 900,  cut: 1600 }
+};
+var KNOT = { "0": "", "200": "打結處理（輕微）", "500": "打結處理（嚴重）" };
+
+function picked(name) { return document.querySelector('input[name="' + name + '"]:checked').value; }
+
+function calc() {
+  var p = PRICE[picked("size")];
+  var service = picked("service");
+  var knot = Number(picked("knot"));
+  var lines = [], total = p[service];
+  lines.push(p.label + (service === "bath" ? "洗澡" : "洗澡＋剪毛") + "　" + p[service] + " 元");
+  if (knot) { total += knot; lines.push(KNOT[knot] + "　＋" + knot + " 元"); }
+  document.querySelectorAll('input[name="add"]:checked').forEach(function (c) {
+    total += Number(c.value);
+    lines.push(c.dataset.name + "　＋" + c.value + " 元");
+  });
+  document.getElementById("total").textContent = total.toLocaleString() + " 元";
+  document.getElementById("detail").innerHTML = lines.map(function (t) { return "<li>" + t + "</li>"; }).join("");
+}
+
+document.querySelectorAll("input").forEach(function (i) { i.addEventListener("change", calc); });
+calc();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+/* 毛小孩の家｜全站共用樣式（W13「把每一頁的外觀統一」就是統一到這一份） */
+:root{
+  --bg:#fdf8f3; --card:#ffffff; --line:#eadccd; --ink:#3a2c20; --muted:#8a7766;
+  --accent:#c9692e; --accent-ink:#ffffff; --accent-soft:#fbe9dc;
+  --ok:#3f7d4e; --ok-soft:#e3f1e6; --warn:#b5462f; --warn-soft:#fbe4de; --mid:#a8741a; --mid-soft:#fbefd6;
+  --shadow:0 1px 2px rgba(80,50,30,.05), 0 8px 24px rgba(80,50,30,.08);
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1d1814; --card:#28211c; --line:#3d332b; --ink:#f2e9e1; --muted:#a8978a;
+    --accent:#e0874d; --accent-ink:#1d1814; --accent-soft:#3c2a1d;
+    --ok:#7cc08c; --ok-soft:#21332a; --warn:#ef8b74; --warn-soft:#3d241f; --mid:#e3b45c; --mid-soft:#3a2f1b;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+img{max-width:100%;display:block}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+
+/* 頂部導覽：每一頁都一樣，點得進去也回得來 */
+.nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.brand{font-weight:800;font-size:1.15rem;color:var(--ink);text-decoration:none;margin-right:auto}
+.brand span{color:var(--accent)}
+.nav a.link{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:999px;font-size:.95rem}
+.nav a.link:hover{background:var(--accent-soft);color:var(--ink)}
+.nav a.link[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+/* 手機：店名一行、連結一行，連結太多就左右滑，不要擠成兩排 */
+@media (max-width:560px){
+  .brand{flex-basis:100%}
+  .nav .wrap{row-gap:4px}
+  .nav .links{display:flex;gap:4px;overflow-x:auto;margin:0 -16px;padding:0 16px;scrollbar-width:none}
+  .nav a.link{white-space:nowrap}
+}
+.nav .links{display:flex;gap:6px}
+
+.back{display:inline-block;margin:18px 0 0;color:var(--muted);text-decoration:none;font-size:.95rem}
+.back:hover{color:var(--accent)}
+
+h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.25;margin:.4em 0 .2em}
+h2{font-size:1.35rem;margin:0 0 .5em}
+.lead{color:var(--muted);font-size:1.05rem;margin:0 0 1.2em}
+section{margin:36px 0}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+
+/* 首頁 */
+.hero{display:grid;gap:24px;align-items:center;grid-template-columns:1.1fr .9fr;padding:28px 0 8px}
+.hero img{border-radius:var(--radius);box-shadow:var(--shadow);aspect-ratio:4/3;object-fit:cover;width:100%}
+.hero .tags{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.tag{background:var(--accent-soft);color:var(--ink);padding:4px 12px;border-radius:999px;font-size:.9rem}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:700;
+  padding:10px 18px;border-radius:12px;border:0;font:inherit;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+@media (max-width:720px){ .hero{grid-template-columns:1fr} }
+
+.tool{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);transition:transform .15s}
+.tool:hover{transform:translateY(-3px)}
+.tool .icon{font-size:2rem}
+.tool b{font-size:1.1rem}
+.tool span{color:var(--muted);font-size:.95rem}
+.tool .go{margin-top:auto;color:var(--accent);font-weight:700}
+
+.figure img{border-radius:12px;cursor:zoom-in}
+.figure figcaption{color:var(--muted);font-size:.9rem;margin-top:8px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba figure{margin:0}
+
+.credit td,.credit th{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.credit{width:100%;border-collapse:collapse;font-size:.95rem}
+.credit th{color:var(--muted);font-weight:600}
+
+.notice{background:var(--mid-soft);border-left:5px solid var(--mid);border-radius:0 12px 12px 0;padding:12px 16px}
+
+/* 表單元件 */
+label.q{display:block;font-weight:700;margin:18px 0 8px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choices label{display:flex;align-items:center;gap:6px;background:var(--bg);border:2px solid var(--line);
+  border-radius:12px;padding:8px 14px;cursor:pointer;user-select:none}
+.choices input{accent-color:var(--accent)}
+.choices label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.result{margin-top:22px;padding:18px;border-radius:14px;background:var(--accent-soft)}
+.result .big{font-size:2rem;font-weight:800}
+.result ul{margin:.4em 0 0;padding-left:1.2em}
+
+/* 危險等級 */
+.lv{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.lv.high{background:var(--warn-soft);color:var(--warn)}
+.lv.mid{background:var(--mid-soft);color:var(--mid)}
+.lv.low{background:var(--ok-soft);color:var(--ok)}
+.food{display:flex;gap:12px;align-items:flex-start}
+.food .em{font-size:1.8rem;line-height:1}
+.food b{font-size:1.05rem}
+.food p{margin:.2em 0 0;color:var(--muted);font-size:.95rem}
+.empty{color:var(--muted);text-align:center;padding:24px}
+
+/* 照護說明 */
+.steps{counter-reset:s;display:grid;gap:16px}
+.do,.dont{margin:.4em 0 0;padding-left:1.3em}
+.do li::marker{content:"✓  ";color:var(--ok)}
+.dont li::marker{content:"✕  ";color:var(--warn)}
+
+footer{margin:56px 0 0;padding:24px 0 36px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+
+/* 點圖放大 */
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:16px;z-index:9;cursor:zoom-out}
+#zoom.on{display:flex}
+#zoom img{max-height:92vh;border-radius:10px}
+
+@media print{ .nav,.back,footer,.btn{display:none} body{background:#fff} .card{box-shadow:none} }
+
+/* 商圈帶：毛孩商店街三間店都有，同名同色，點了回商圈首頁（店本身的配色各自決定） */
+.district{display:block;background:#d9733a;color:#fff;text-align:center;font-size:.85rem;font-weight:700;
+  text-decoration:none;padding:5px 12px;letter-spacing:.06em}
+.district:hover{background:#c0612b}
+@media print{ .district{display:none} }

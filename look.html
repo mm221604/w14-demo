@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>犬貓危險食物查詢｜毛小孩の家</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐾 毛小孩<span>の</span>家</a>
+  <div class="links">
+    <a class="link" href="index.html">首頁</a>
+    <a class="link" href="calc.html">價格試算</a>
+    <a class="link" href="look.html" aria-current="page">危險食物</a>
+    <a class="link" href="care.html">美容後照護</a>
+  </div>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1>🔍 犬貓危險食物查詢</h1>
+  <p class="lead">選狗或貓，下面只會出現對牠危險的東西。</p>
+
+  <div class="card">
+    <label class="q">牠是？</label>
+    <div class="choices">
+      <label><input type="radio" name="pet" value="dog" checked> 🐶 狗</label>
+      <label><input type="radio" name="pet" value="cat"> 🐱 貓</label>
+    </div>
+    <label class="q">篩選</label>
+    <div class="choices">
+      <label><input type="checkbox" id="highOnly"> 只看高危險</label>
+      <label style="flex:1;min-width:200px"><input type="search" id="q" placeholder="打字找，例如：葡萄"
+        style="border:0;background:transparent;font:inherit;color:inherit;width:100%;outline:none"></label>
+    </div>
+    <p id="count" class="lead" style="margin:18px 0 8px"></p>
+    <div id="list" class="grid" style="grid-template-columns:1fr"></div>
+  </div>
+
+  <div class="notice" style="margin-top:20px">
+    <strong>吃到了怎麼辦？</strong>不要自己催吐，<strong>記下吃了什麼、吃多少、什麼時候吃的</strong>，馬上打給獸醫。
+    這張表整理自常見的寵物中毒資料，只能當參考，不能取代獸醫的判斷。
+  </div>
+</main>
+
+<footer><div class="wrap">🏘️ <a href="入口頁.html">毛孩商店街</a>的一間店　·　毛小孩の家　·　製作：王小美（這一頁是第 12 週的新功能）</div></footer>
+
+<script>
+/* pets：對哪種動物危險；lv：high 高 / mid 中 / low 低 */
+var FOODS = [
+  { em: "🍫", name: "巧克力、可可", pets: ["dog", "cat"], lv: "high", why: "含可可鹼，會嘔吐、心跳加快、抽搐。顏色越深（黑巧克力、可可粉）越危險。" },
+  { em: "🍇", name: "葡萄、葡萄乾", pets: ["dog", "cat"], lv: "high", why: "可能造成急性腎衰竭，少量也可能出事，而且每隻反應不同。" },
+  { em: "🧅", name: "洋蔥、大蒜、蔥、韭菜", pets: ["dog", "cat"], lv: "high", why: "破壞紅血球造成貧血。煮熟的、粉末、湯裡的都一樣危險，貓比狗更敏感。" },
+  { em: "🍬", name: "木糖醇（無糖口香糖、部分牙膏）", pets: ["dog"], lv: "high", why: "讓狗的血糖急速下降，嚴重會肝衰竭。看包裝成分有沒有 xylitol。" },
+  { em: "🍺", name: "酒精", pets: ["dog", "cat"], lv: "high", why: "體型小，一點點就會嘔吐、走路不穩、呼吸變慢。" },
+  { em: "☕", name: "咖啡、茶、能量飲料", pets: ["dog", "cat"], lv: "high", why: "咖啡因會讓心跳變快、亢奮、發抖，嚴重會抽搐。" },
+  { em: "💐", name: "百合花（不是食物，但很常見）", pets: ["cat"], lv: "high", why: "花瓣、葉子、花粉，連花瓶裡的水都會讓貓急性腎衰竭。家裡有貓就不要放。" },
+  { em: "🥜", name: "夏威夷豆", pets: ["dog"], lv: "mid", why: "會無力（尤其後腿）、發抖、發燒，通常一兩天內會好，但要讓獸醫看。" },
+  { em: "🍖", name: "煮熟的骨頭", pets: ["dog", "cat"], lv: "mid", why: "煮過會變脆，咬碎的尖角可能刺傷嘴巴和腸胃，或卡住。" },
+  { em: "🍞", name: "生的麵團（有酵母）", pets: ["dog", "cat"], lv: "mid", why: "在胃裡繼續發酵膨脹，還會產生酒精。" },
+  { em: "🥑", name: "酪梨", pets: ["dog", "cat"], lv: "low", why: "果肉多半是腸胃不適；比較危險的是果核，吞下去會卡住。" },
+  { em: "🥛", name: "牛奶", pets: ["dog", "cat"], lv: "low", why: "很多成貓、成犬有乳糖不耐，喝了會拉肚子。要喝就買寵物專用的。" }
+];
+var LV = { high: "高危險", mid: "中危險", low: "要注意" };
+var ORDER = { high: 0, mid: 1, low: 2 };
+
+function render() {
+  var pet = document.querySelector('input[name="pet"]:checked').value;
+  var highOnly = document.getElementById("highOnly").checked;
+  var q = document.getElementById("q").value.trim();
+  var rows = FOODS.filter(function (f) {
+    return f.pets.indexOf(pet) >= 0 && (!highOnly || f.lv === "high") && (!q || f.name.indexOf(q) >= 0);
+  }).sort(function (a, b) { return ORDER[a.lv] - ORDER[b.lv]; });
+
+  document.getElementById("count").textContent =
+    "對" + (pet === "dog" ? "狗" : "貓") + "危險的東西：" + rows.length + " 項";
+  document.getElementById("list").innerHTML = rows.length ? rows.map(function (f) {
+    return '<div class="food"><span class="em">' + f.em + '</span><div><b>' + f.name + '</b> ' +
+      '<span class="lv ' + f.lv + '">' + LV[f.lv] + '</span><p>' + f.why + '</p></div></div>';
+  }).join("") : '<div class="empty">找不到符合的項目——換個字試試，或取消「只看高危險」。</div>';
+}
+
+document.querySelectorAll("input").forEach(function (i) { i.addEventListener("input", render); i.addEventListener("change", render); });
+render();
+</script>
+</body>
+</html>
