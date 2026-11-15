@@ -1,0 +1,9 @@
+{
+  "name": "maoxiaohai-demo",
+  "private": true,
+  "description": "毛小孩の家：W14 會員功能示範（Vercel Function + Neon）",
+  "dependencies": {
+    "@neondatabase/serverless": "1.1.0",
+    "jose": "5.9.6"
+  }
+}

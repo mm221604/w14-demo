@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>會員專區｜毛小孩の家</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tabs button{flex:1;padding:10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);font:inherit;font-weight:700;cursor:pointer;color:var(--ink)}
+  .tabs button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+  .field{display:block;margin:10px 0}
+  .field span{display:block;font-weight:700;margin-bottom:4px}
+  .field input,.field select{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;font:inherit;background:var(--card);color:var(--ink)}
+  .msg{margin-top:12px;padding:10px 14px;border-radius:10px;display:none}
+  .msg.on{display:block}
+  .msg.err{background:var(--warn-soft);color:var(--warn)}
+  .msg.ok{background:var(--ok-soft);color:var(--ok)}
+  .pet{display:flex;align-items:center;gap:12px;justify-content:space-between}
+  .pet .em{font-size:1.8rem}
+  .pet button{background:none;border:0;color:var(--warn);cursor:pointer;font:inherit}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="index.html">🐾 毛小孩<span>の</span>家</a>
+  <div class="links">
+    <a class="link" href="index.html">首頁</a>
+    <a class="link" href="calc.html">價格試算</a>
+    <a class="link" href="look.html">危險食物</a>
+    <a class="link" href="care.html">美容後照護</a>
+    <a class="link" href="member.html" id="memberLink" aria-current="page">🔑 會員登入</a>
+  </div>
+</div></nav>
+
+<main class="wrap">
+  <a class="back" href="index.html">← 回首頁</a>
+  <h1>🔑 會員專區</h1>
+  <p class="lead">註冊會員，把你家毛孩的資料存起來，下次預約不用再講一次。</p>
+
+  <!-- 還沒登入：註冊／登入 -->
+  <section id="guest" class="card" style="max-width:480px">
+    <div class="tabs">
+      <button type="button" id="tabUp" aria-pressed="true">註冊</button>
+      <button type="button" id="tabIn" aria-pressed="false">登入</button>
+    </div>
+    <form id="authForm">
+      <label class="field" id="nameRow"><span>暱稱</span><input id="name" maxlength="20" autocomplete="nickname"></label>
+      <label class="field"><span>Email</span><input id="email" type="email" required autocomplete="email"></label>
+      <label class="field"><span>密碼（至少 8 個字）</span><input id="password" type="password" minlength="8" required autocomplete="new-password"></label>
+      <button class="btn" type="submit" id="authBtn">註冊</button>
+    </form>
+    <div class="msg" id="authMsg" role="status"></div>
+    <p class="lead" style="margin:14px 0 0;font-size:.9rem">練習時請用<strong>假資料</strong>，不要用你常用的密碼。</p>
+  </section>
+
+  <!-- 已登入：我的毛孩 -->
+  <section id="member" hidden>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div>👋 歡迎，<b id="who"></b></div>
+      <button class="btn ghost" type="button" id="logout">登出</button>
+    </div>
+
+    <h2 style="margin-top:28px">我的毛孩</h2>
+    <div class="grid" id="pets"></div>
+    <p class="empty" id="noPets" hidden>還沒有資料，在下面新增一隻吧。</p>
+
+    <h2 style="margin-top:28px">新增一隻</h2>
+    <form class="card" id="petForm" style="max-width:520px">
+      <label class="field"><span>名字</span><input id="petName" maxlength="30" required></label>
+      <label class="field"><span>種類</span><select id="species"><option>狗</option><option>貓</option><option>其他</option></select></label>
+      <label class="field"><span>體型</span><select id="size"><option>小型</option><option>中型</option><option>大型</option></select></label>
+      <label class="field"><span>備註（怕吹風機、會咬人…）</span><input id="note" maxlength="200"></label>
+      <button class="btn" type="submit">存起來</button>
+      <div class="msg" id="petMsg" role="status"></div>
+    </form>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  🏘️ <a href="入口頁.html">毛孩商店街</a>的一間店　·　毛小孩の家　·　製作：王小美（這一頁是第 14 週的會員功能）
+</div></footer>
+
+<script>
+/* 會員登入用 Neon Auth；毛孩資料走自己網站的 /api/pets，資料庫密碼只在 Vercel 伺服器上。 */
+var AUTH_URL = null;
+var $ = function (id) { return document.getElementById(id); };
+var mode = "up";
+function show(el, text, ok) { el.textContent = text; el.className = "msg on " + (ok ? "ok" : "err"); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]; }); }
+
+async function authUrl() {
+  if (AUTH_URL) return AUTH_URL;
+  var r = await fetch("/api/config"); var d = await r.json();
+  if (!r.ok) throw new Error(d.error || "讀不到登入設定");
+  return (AUTH_URL = d.authUrl);
+}
+async function auth(path, body) {
+  var r = await fetch((await authUrl()) + path, { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  var d = await r.json().catch(function () { return {}; });
+  if (!r.ok) throw new Error(d.message || ("登入服務回應 " + r.status));
+  return d;
+}
+async function currentUser() {
+  var r = await fetch((await authUrl()) + "/get-session", { credentials: "include" });
+  var d = await r.json().catch(function () { return null; });
+  return d && d.user ? d.user : null;
+}
+var token = null;
+async function getToken() {
+  var r = await fetch((await authUrl()) + "/token", { credentials: "include" });
+  if (!r.ok) throw new Error("登入過期，請重新登入");
+  return (token = (await r.json()).token);
+}
+async function api(path, options) {
+  options = options || {};
+  for (var i = 0; i < 2; i++) {
+    if (!token) await getToken();
+    var r = await fetch(path, { method: options.method || "GET", headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }, body: options.body ? JSON.stringify(options.body) : undefined });
+    if (r.status === 401 && i === 0) { token = null; continue; }
+    var d = await r.json().catch(function () { return null; });
+    if (!r.ok) throw new Error((d && d.error) || ("伺服器回應 " + r.status));
+    return d;
+  }
+}
+var ICON = { "狗": "🐶", "貓": "🐱", "其他": "🐾" };
+async function loadPets() {
+  var list = (await api("/api/pets")).items;
+  $("noPets").hidden = list.length > 0;
+  $("pets").innerHTML = list.map(function (p) {
+    return "<div class=\"card pet\"><span class=\"em\">" + (ICON[p.species] || "🐾") + "</span><div style=\"flex:1\"><b>" + esc(p.pet_name) + "</b><br><span class=\"lead\" style=\"font-size:.9rem\">" + esc(p.species) + (p.size ? "・" + esc(p.size) : "") + (p.note ? "・" + esc(p.note) : "") + "</span></div><button type=\"button\" data-id=\"" + p.id + "\">刪除</button></div>";
+  }).join("");
+}
+async function render() {
+  var user = null;
+  try { user = await currentUser(); } catch (e) { show($("authMsg"), e.message); }
+  $("guest").hidden = !!user; $("member").hidden = !user;
+  $("memberLink").textContent = user ? "👤 " + (user.name || "會員專區") : "🔑 會員登入";
+  if (user) { $("who").textContent = user.name || user.email; try { await loadPets(); } catch (e) { show($("petMsg"), e.message); } }
+}
+function setMode(m) {
+  mode = m; $("tabUp").setAttribute("aria-pressed", m === "up"); $("tabIn").setAttribute("aria-pressed", m === "in");
+  $("nameRow").hidden = m !== "up"; $("authBtn").textContent = m === "up" ? "註冊" : "登入";
+  $("password").autocomplete = m === "up" ? "new-password" : "current-password"; $("authMsg").className = "msg";
+}
+$("tabUp").onclick = function () { setMode("up"); };
+$("tabIn").onclick = function () { setMode("in"); };
+$("authForm").onsubmit = async function (e) {
+  e.preventDefault(); var email = $("email").value.trim(), password = $("password").value; $("authBtn").disabled = true;
+  try {
+    if (mode === "up") await auth("/sign-up/email", { email: email, password: password, name: $("name").value.trim() || email.split("@")[0] });
+    else await auth("/sign-in/email", { email: email, password: password });
+    $("password").value = ""; token = null; await render();
+  } catch (err) { show($("authMsg"), err.message); } finally { $("authBtn").disabled = false; }
+};
+$("logout").onclick = async function () { await auth("/sign-out", {}).catch(function () {}); token = null; await render(); };
+$("petForm").onsubmit = async function (e) {
+  e.preventDefault();
+  try { await api("/api/pets", { method: "POST", body: { pet_name: $("petName").value.trim(), species: $("species").value, size: $("size").value, note: $("note").value.trim() } }); e.target.reset(); show($("petMsg"), "存好了！", true); await loadPets(); }
+  catch (err) { show($("petMsg"), err.message); }
+};
+$("pets").onclick = async function (e) {
+  var id = e.target.dataset && e.target.dataset.id; if (!id || !confirm("確定要刪除這一隻的資料嗎？")) return;
+  try { await api("/api/pets?id=" + encodeURIComponent(id), { method: "DELETE" }); await loadPets(); } catch (err) { show($("petMsg"), err.message); }
+};
+render();
+</script>
+</body>
+</html>
